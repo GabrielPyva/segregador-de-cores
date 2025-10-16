@@ -2,5 +2,6 @@
 
 ## Afazeres
 
-- [ ] Criar pacote ROS
-- [ ] Descobrir como/se pode versionar dentro do ROS
+- [X] Criar pacote ROS
+- [X] Descobrir como/se pode versionar dentro do ROS
+- [ ] Testar launch de imagem da câmera
