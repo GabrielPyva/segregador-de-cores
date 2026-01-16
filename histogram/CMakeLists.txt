@@ -13,9 +13,9 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(vision_node
     src/main.cpp
-    #src/Converter.cpp
+    src/converter.cpp
     #src/ImageCapturer.cpp
-    #src/HistCalculator.cpp
+    src/histCalculator.cpp
 )
 
 target_link_libraries(vision_node ${OpenCV_LIBS})
