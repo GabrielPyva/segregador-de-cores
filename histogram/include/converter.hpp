@@ -1,5 +1,6 @@
 #pragma once
 #include "buffer.hpp"
+#include "imageCapturer.hpp"
 #include <opencv2/opencv.hpp>
 
 class Converter {
@@ -8,5 +9,5 @@ private:
 
 public:
   Converter(int code);
-  bool converter(Buffer &ctx);
+  bool process(Buffer &ctx);
 };
