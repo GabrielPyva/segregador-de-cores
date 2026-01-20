@@ -24,18 +24,19 @@ void HistCalculator::showHistogram(Buffer &ctx) {
 
   normalize(displayHist, displayHist, 0, 255, NORM_MINMAX);
 
-  histImage.setTo(Scalar(0, 0, 0));
+  displayHist.setTo(Scalar(0, 0, 0));
 
   for (int h = 0; h < hBins; h++) {
     for (int s = 0; s < sBins; s++) {
       float binVal = ctx.histogram.at<float>(h, s);
       int intensity = cvRound(binVal);
-      rectangle(histImage, Point(h * histW / hBins, histH - s * histH / sBins),
+      rectangle(displayHist,
+                Point(h * histW / hBins, histH - s * histH / sBins),
                 Point((h + 1) * histW / hBins, histH - (s + 1) * histH / sBins),
                 Scalar::all(intensity), FILLED);
     }
   }
 
-  imshow("H-S Histogram", histImage);
+  imshow("H-S Histogram", displayHist);
   waitKey(1);
 }
