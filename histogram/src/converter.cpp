@@ -6,14 +6,16 @@ using namespace std;
 Converter::Converter(int code) : bayerCode(code) { this->bayerCode = code; }
 
 bool Converter::process(Buffer &ctx) {
-  // Conversions
-  bool state = false;
-  if (!ctx.rawImage.empty()) {
-    cvtColor(ctx.rawImage, ctx.rgbImage, cv::COLOR_BayerBG2BGR);
-    cvtColor(ctx.rgbImage, ctx.hsvImage, cv::COLOR_BGR2HSV);
-    state = true;
-  } else {
-    cerr << "No raw image found in buffer!" << std::endl;
-  }
-  return state;
+  // Convert Bayer to RGB
+  if (ctx.rawImage.empty())
+    return false;
+
+  cvtColor(ctx.rawImage, ctx.rgbImage, this->bayerCode);
+
+  // Convert 16-bit to 32
+  ctx.rgbImage.convertTo(ctx.floatImage, CV_32F, 1.0 / 65535.0);
+
+  // Convert RGB to HSV
+  cvtColor(ctx.floatImage, ctx.hsvImage, COLOR_BGR2HSV);
+  return true;
 }
