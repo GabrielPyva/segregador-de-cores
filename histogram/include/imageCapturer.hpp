@@ -1,23 +1,22 @@
 #pragma once
-#include <buffer.hpp>
 #include <fstream>
-#include <iostream>
-#include <json/json.h>
+#include <json/json.h> // Ensure you have libjsoncpp-dev installed
 #include <opencv2/opencv.hpp>
 #include <string>
-
-using namespace std;
-using namespace cv;
 
 class ImageCapturer {
 private:
   int cameraIndex;
-  int frameCounter;
-  string imagesJson;
+  cv::VideoCapture cap; // Camera stays OPEN here
+  std::string imagesJson;
 
 public:
-  ImageCapturer(int camIndex, const string &jsonFile);
-  Mat sendFrame();
-  Mat sendImages();
-  void saveHsvHistogram(Buffer &ctx);
+  ImageCapturer(int camIndex, const std::string &jsonFile);
+  ~ImageCapturer(); // Destructor to close camera
+
+  // Returns true if a frame was grabbed
+  bool getFrame(cv::Mat &outputFrame);
+
+  // Returns true if image loaded
+  bool getImage(cv::Mat &outputFrame);
 };

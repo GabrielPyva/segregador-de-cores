@@ -1,55 +1,50 @@
-#include <imageCapturer.hpp>
+#include "imageCapturer.hpp"
+#include <iostream>
 
 using namespace cv;
 using namespace std;
 
 ImageCapturer::ImageCapturer(int camIndex, string const &jsonFile)
-    : cameraIndex(camIndex), frameCounter(0), imagesJson(jsonFile) {}
+    : cameraIndex(camIndex), imagesJson(jsonFile) {
 
-Mat ImageCapturer::sendFrame() {
-  VideoCapture cap(cameraIndex);
+  cap.open(cameraIndex);
   if (!cap.isOpened()) {
-    cerr << "Error: Could not open camera." << endl;
-    return Mat();
+    cerr << "Warning: Could not open camera " << camIndex << endl;
   }
-
-  Mat frame;
-  cap >> frame;
-  if (frame.empty()) {
-    cerr << "Error: Could not read frame." << endl;
-    return Mat();
-  }
-
-  frameCounter++;
-  return frame;
 }
 
-Mat ImageCapturer::sendImages() {
+ImageCapturer::~ImageCapturer() {
+  if (cap.isOpened())
+    cap.release();
+}
+
+bool ImageCapturer::getFrame(cv::Mat &outputFrame) {
+  if (!cap.isOpened())
+    return false;
+
+  cap >> outputFrame;
+  if (outputFrame.empty()) {
+    cerr << "Error: Captured empty frame." << endl;
+    return false;
+  }
+  return true;
+}
+
+bool ImageCapturer::getImage(cv::Mat &outputFrame) {
   ifstream file(imagesJson);
   if (!file.is_open()) {
-    cerr << "Error: Could not open JSON file." << endl;
-    return Mat();
+    cerr << "Error: JSON file not found." << endl;
+    return false;
   }
 
   Json::Value root;
   file >> root;
-  file.close();
 
-  vector<Mat> images;
   for (const auto &imagePath : root["images"]) {
-    Mat img = imread(imagePath.asString());
-    if (img.empty()) {
-      cerr << "Error: Could not read image " << imagePath.asString() << endl;
-      continue;
-    }
-    images.push_back(img);
+    outputFrame = imread(imagePath.asString(), IMREAD_UNCHANGED);
+    if (!outputFrame.empty())
+      return true;
   }
 
-  if (images.empty()) {
-    cerr << "Error: No valid images found." << endl;
-    return Mat();
-  }
-
-  // For simplicity, return the first image
-  return images[0];
+  return false;
 }

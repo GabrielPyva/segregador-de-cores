@@ -9,5 +9,5 @@ private:
 
 public:
   Converter(int code);
-  bool process(Buffer &ctx);
+  void process(Buffer &ctx);
 };

@@ -1,21 +1,19 @@
 #include "converter.hpp"
+#include <imageCapturer.hpp>
 #include <opencv2/imgproc.hpp>
 
 using namespace cv;
-using namespace std;
-Converter::Converter(int code) : bayerCode(code) { this->bayerCode = code; }
 
-bool Converter::process(Buffer &ctx) {
-  // Convert Bayer to RGB
-  if (ctx.rawImage.empty())
-    return false;
+Converter::Converter(int code) : bayerCode(code) {}
 
-  cvtColor(ctx.rawImage, ctx.rgbImage, this->bayerCode);
+void Converter::process(Buffer &ctx) {
+  if (ctx.rgbImage.empty())
+    return; // Safety check
 
-  // Convert 16-bit to 32
-  ctx.rgbImage.convertTo(ctx.floatImage, CV_32F, 1.0 / 65535.0);
+  // 1. Convert to Float (Scale 0-65535 -> 0.0-1.0)
+  // Use the RGB image already sitting in the buffer
+  // ctx.rgbImage.convertTo(ctx.floatImage, CV_8U, 1.0 / 255.0);
 
-  // Convert RGB to HSV
-  cvtColor(ctx.floatImage, ctx.hsvImage, COLOR_BGR2HSV);
-  return true;
+  // 2. Convert to HSV
+  cvtColor(ctx.rgbImage, ctx.hsvImage, COLOR_BGR2HSV);
 }

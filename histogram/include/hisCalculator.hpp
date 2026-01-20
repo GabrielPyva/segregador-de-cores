@@ -13,6 +13,7 @@ private:
   const float *ranges[2] = {hRanges, sRanges};
   const int channels[2] = {0, 1};
   const int histW = 512, histH = 400;
+  cv::Mat histImage;
 
 public:
   HistCalculator(int h, int s);
