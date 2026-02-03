@@ -3,6 +3,6 @@
 #include <vector>
 
 struct Buffer {
-  cv::Mat rgbImage, floatImage, hsvImage, histogram;
+  cv::Mat rgbImage, mlImage, hsvImage, histogram;
   std::vector<float> mlVector;
 };

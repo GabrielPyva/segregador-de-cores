@@ -5,6 +5,8 @@
 #include <iostream>
 #include <opencv2/highgui.hpp>
 
+using namespace std;
+
 int main(int argc, char *argv[]) {
   std::string jsonPath =
       "/home/daniel/Work/segregador-de-cores/histogram/images/imagesPaths.json";
@@ -25,10 +27,22 @@ int main(int argc, char *argv[]) {
 
     if (!gotFrame) {
       std::cout << "Camera failed, trying JSON images..." << std::endl;
-      if (!capturer.getImage(buffer.rgbImage)) {
-        std::cout << "No images available. Exiting." << std::endl;
-        break;
+      ifstream file(jsonPath);
+      Json::Value root;
+      file >> root;
+      for (const auto &imagePath : root["images"]) {
+        std::cout << "Image Path: " << imagePath.asString() << std::endl;
+        buffer.rgbImage =
+            cv::imread(imagePath.asString(), cv::IMREAD_UNCHANGED);
+        cv::imshow("Debug Window", buffer.rgbImage);
+        std::cout << "Image Size: " << buffer.rgbImage.size() << std::endl;
+        converter.process(buffer);
+
+        calculator.calculateHhsv(buffer);
+        calculator.showHistogram(buffer);
+        cv::waitKey(0);
       }
+      break;
     }
     cv::imshow("Debug Window", buffer.rgbImage);
     std::cout << "Image Size: " << buffer.rgbImage.size() << std::endl;
