@@ -198,6 +198,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.envrc
 
 # Spyder project settings
 .spyderproject
@@ -289,5 +290,9 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+#Google Drive Credentianls
+credentials.json
+token.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,c++,cmake,ros,git
